@@ -1,0 +1,107 @@
+-- Create the Patients table
+CREATE TABLE Patients (
+    PatientId INT PRIMARY KEY,
+    PatientName VARCHAR(100) NOT NULL,
+    DateOfBirth DATE NOT NULL,
+    Gender VARCHAR(10) DEFAULT 'Unknown',
+    Address VARCHAR(255) NOT NULL,
+    PhoneNumber VARCHAR(15),
+    Email VARCHAR(100) UNIQUE
+);
+
+-- Insert dummy data into Patients table
+INSERT INTO Patients (PatientId, PatientName, DateOfBirth, Gender, Address, PhoneNumber, Email)
+VALUES 
+(1, 'John Doe', '1980-01-01', 'Male', '123 Elm Street', '123-456-7890', 'johndoe@example.com'),
+(2, 'Jane Smith', '1990-02-02', 'Female', '456 Oak Avenue', '987-654-3210', 'janesmith@example.com');
+
+-- Create the Doctors table
+CREATE TABLE Doctors (
+    DoctorId INT PRIMARY KEY,
+    DoctorName VARCHAR(100) NOT NULL,
+    Specialization VARCHAR(100) NOT NULL,
+    PhoneNumber VARCHAR(15) NOT NULL,
+    Email VARCHAR(100) UNIQUE
+);
+
+-- Insert dummy data into Doctors table
+INSERT INTO Doctors (DoctorId, DoctorName, Specialization, PhoneNumber, Email)
+VALUES 
+(1, 'Dr. Alice Johnson', 'Cardiology', '555-123-4567', 'alicejohnson@example.com'),
+(2, 'Dr. Bob Brown', 'Neurology', '555-987-6543', 'bobbrown@example.com');
+
+-- Create the Appointments table
+CREATE TABLE Appointments (
+    AppointmentId INT PRIMARY KEY,
+    AppointmentDate DATE,
+    AppointmentTime TIME NOT NULL,
+    Status VARCHAR(20),
+    PatientId INT,
+    DoctorId INT,
+    FOREIGN KEY (PatientId) REFERENCES Patients(PatientId) ON DELETE CASCADE,
+    FOREIGN KEY (DoctorId) REFERENCES Doctors(DoctorId) ON UPDATE CASCADE
+);
+
+-- Insert dummy data into Appointments table
+INSERT INTO Appointments (AppointmentId, AppointmentDate, AppointmentTime, Status, PatientId, DoctorId)
+VALUES 
+(1, '2024-07-10', '10:00:00', 'scheduled', 1, 1),
+(2, '2024-07-11', '14:00:00', 'scheduled', 2, 2);
+
+-- Create the MedicalRecords table
+CREATE TABLE MedicalRecords (
+    RecordId INT PRIMARY KEY,
+    DateOfVisit DATE NOT NULL,
+    PatientId INT,
+    DoctorId INT,
+    FOREIGN KEY (PatientId) REFERENCES Patients(PatientId),
+    FOREIGN KEY (DoctorId) REFERENCES Doctors(DoctorId)
+);
+
+-- Insert dummy data into MedicalRecords table
+INSERT INTO MedicalRecords (RecordId, DateOfVisit, PatientId, DoctorId)
+VALUES 
+(1, '2024-07-10', 1, 1),
+(2, '2024-07-11', 2, 2);
+
+-- Create the Billing table
+CREATE TABLE Billing (
+    BillId INT PRIMARY KEY,
+    DateOfBilling DATE NOT NULL,
+    Amount DECIMAL(10, 2) NOT NULL,
+    PaymentStatus VARCHAR(20),
+    PatientId INT,
+    DoctorId INT,
+    AppointmentId INT,
+    FOREIGN KEY (PatientId) REFERENCES Patients(PatientId),
+    FOREIGN KEY (DoctorId) REFERENCES Doctors(DoctorId),
+    FOREIGN KEY (AppointmentId) REFERENCES Appointments(AppointmentId)
+);
+
+-- Insert dummy data into Billing table
+INSERT INTO Billing (BillId, DateOfBilling, Amount, PaymentStatus, PatientId, DoctorId, AppointmentId)
+VALUES 
+(1, '2024-07-10', 200.00, 'paid', 1, 1, 1),
+(2, '2024-07-11', 150.00, 'pending', 2, 2, 2);
+
+-- Create the Departments table
+CREATE TABLE Departments (
+    DepartmentId INT PRIMARY KEY,
+    DepartmentName VARCHAR(100) UNIQUE,
+    DoctorId INT,
+    FOREIGN KEY (DoctorId) REFERENCES Doctors(DoctorId)
+);
+
+-- Insert dummy data into Departments table
+INSERT INTO Departments (DepartmentId, DepartmentName, DoctorId)
+VALUES 
+(1, 'Cardiology', 1),
+(2, 'Neurology', 2);
+
+-- Query to fetch records of all tables
+SELECT * FROM Patients;
+SELECT * FROM Doctors;
+SELECT * FROM Appointments;
+SELECT * FROM MedicalRecords;
+SELECT * FROM Billing;
+SELECT * FROM Departments;
